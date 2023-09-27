@@ -17,4 +17,13 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
+    Mux16(a=in, b=false, sel=reset, out=resetOut);
+    Inc16(in=current, out=incOut);
+
+    Mux16(a=incOut, b=in, sel=load, out=out1);
+    Mux16(a=out1, b=resetOut, sel=reset, out=out2);
+
+    Or8Way(in[0]=load, in[1]=reset, in[2]=inc, out=compositeLoad);
+
+    Register(in=out2, load=compositeLoad, out=out, out=current);
 }
