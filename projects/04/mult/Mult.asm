@@ -10,3 +10,35 @@
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
 // Put your code here.
+@R2
+M=0 // set R2 to 0
+
+@i
+M=0 // set i to 0
+
+@R1
+D=M
+@n
+M=D // set n to R1
+
+(LOOP)
+    @i
+    D=M
+    @n
+    D=D-M
+    @END
+    D;JGE // if i >= n goto END
+
+    @R0
+    D=M
+    @R2
+    M=D+M // increment R2 by R1
+
+    @i
+    M=M+1
+    @LOOP
+    0;JMP
+
+(END)
+    @END
+    0;JMP
