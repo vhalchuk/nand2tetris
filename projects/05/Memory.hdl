@@ -28,4 +28,18 @@ CHIP Memory {
 
     PARTS:
     // Put your code here:
+    DMux(in=load, sel=address[14], a=ram16load);
+    RAM16K(in=in, load=ram16load, address=address[0..13], out=ram16out);
+
+    // Screen load bit = 16384 <= address <= 24575
+    DMux4Way(in=load, sel=address[13..14], c=screenLoad);
+    Screen(in=in, load=screenLoad, address=address[0..12], out=screenOut);
+
+    // Keyboard out address is 24576
+    Keyboard(out=keyboardOut);
+
+    // if (address < 16384) return ram16out
+    // if (address == 24576) return keyboardOut
+    // return screenOut;
+    Mux4Way16(a=ram16out, b=ram16out, c=screenOut, d=keyboardOut, sel=address[13..14], out=out);
 }

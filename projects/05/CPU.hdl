@@ -39,5 +39,58 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
+    // Is A instruction
+    Not(in=instruction[15],out=aInstruction);
+
+    And(a=instruction[15], b=instruction[5], out=saveAluOutToAReg);
+    Mux16(a=instruction, b=aluOut, sel=saveAluOutToAReg, out=aRegIn);
+    // A register load = aInstruction || aDestination
+    Or(a=aInstruction, b=instruction[5], out=aRegLoad);
+    ARegister(in=aRegIn, load=aRegLoad, out=aRegOut, out[0..14]=addressM);
+
+    // aluY
+    And(a=instruction[15], b=instruction[12], out=inMSel);
+    Mux16(a=aRegOut, b=inM, sel=inMSel, out=aluY);
+
     // Put your code here:
+    ALU(x=dRegOut, y=aluY, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluOut, zr=zr, ng=ng, out=outM);
+
+    // D register
+    And(a=instruction[15], b=instruction[4], out=loadDReg);
+    DRegister(in=aluOut, load=loadDReg, out=dRegOut);
+
+    And(a=instruction[3], b=instruction[15], out=writeM);
+
+    // JUMP
+    Not(in=ng, out=notNg);
+    Not(in=zr, out=notZr);
+    // JGT: !ng & !zr & j1
+    And(a=notNg, b=notZr, out=jgtOut1);
+    And(a=jgtOut1, b=instruction[0], out=jgt);
+    // JEQ: zr & j2
+    And(a=zr, b=instruction[1], out=jeq);
+    // JGE: !ng & j2 & j3
+    And(a=notNg, b=instruction[1], out=jgeOut1);
+    And(a=jgeOut1, b=instruction[0], out=jge);
+    // JLT: ng & j1
+    And(a=ng, b=instruction[2], out=jlt);
+    // JNE: !zr & j1 & j3
+    And(a=notZr, b=instruction[2], out=jneOut1);
+    And(a=jneOut1, b=instruction[0], out=jne);
+    // JLE: (ng || zr) & j1 & j2
+    Or(a=ng, b=zr, out=jleOut1);
+    And(a=instruction[2], b=instruction[1], out=jleOut2);
+    And(a=jleOut1, b=jleOut2, out=jle);
+    // JMP: j1 & j2 & j3
+    And(a=instruction[2], b=instruction[1], out=jmpOut1);
+    And(a=jmpOut1, b=instruction[0], out=jmp);
+    // Should jump
+    Or8Way(in[0]=jgt, in[1]=jeq, in[2]=jge, in[3]=jlt, in[4]=jne, in[5]=jle, in[6]=jmp, out=jump);
+    // PC Load
+    And(a=instruction[15], b=jump, out=pcLoad);
+    // Should increment
+    Or(a=pcLoad, b=reset, out=pcIncOut1);
+    Not(in=pcIncOut1, out=pcInc);
+    // PC
+    PC(in=aRegOut, load=pcLoad, inc=pcInc, reset=reset, out[0..14]=pc);
 }
