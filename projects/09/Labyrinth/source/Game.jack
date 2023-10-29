@@ -1,0 +1,90 @@
+/**
+ * Manages the main gameplay loop, including the map and character.
+ */
+class Game {
+    field Map map;
+    field Character character;
+
+    /**
+     * Constructor for initializing a new game.
+     * It sets up the map and character.
+     */
+    constructor Game new() {
+        let map = Map.new();
+        let character = Character.new(map);
+
+        return this;
+    }
+
+    /**
+     * Clean up resources before disposing of the game.
+     */
+    method void dispose() {
+        do map.dispose();
+        do character.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /**
+     * Moves the character based on the direction provided.
+     * @param int direction - Indicates the direction (1=up, 2=down, 3=left, 4=right)
+     */
+    method void moveCharacter(int direction) {
+        do View.eraseCharacter(character);
+        if (direction = 1) { do character.moveUp(); }
+        if (direction = 2) { do character.moveDown(); }
+        if (direction = 3) { do character.moveLeft(); }
+        if (direction = 4) { do character.moveRight(); }
+        do View.drawCharacter(character);
+
+        do Sys.wait(64);  // delays the next movement
+        return;
+    }
+
+    /**
+     * Checks if the player has won the game.
+     * @returns boolean - True if the player has reached the destination, otherwise false.
+     */
+    method boolean hasWon() {
+        var int xPos, yPos;
+
+        let xPos = character.getXPos();
+        let yPos = character.getYPos();
+
+        return (xPos = 31) & (yPos = 1);
+    }
+
+    /**
+     * Main gameplay loop. Handles user input and game state.
+     */
+    method void run() {
+        var char key;  // the key currently pressed by the user
+        var boolean exit; // flag to check if game should end
+
+        let exit = false;
+
+        do map.fill(); // fills map with solid blocks
+        do View.drawMap(map); // draws map on the screen
+        do character.setPosition(0, 14); // sets initial character position
+        do View.drawCharacter(character); // draws character on the screen
+
+        while (~exit) {
+            let key = Keyboard.keyPressed();
+
+            if (key = 81)  { let exit = true; }     // q key
+            if (key = 131) { do moveCharacter(1); }   // up arrow
+            if (key = 133) { do moveCharacter(2); }   // down arrow
+            if (key = 130) { do moveCharacter(3); }   // left arrow
+            if (key = 132) { do moveCharacter(4); }   // right arrow
+
+            if (hasWon() = true) {
+                do Screen.clearScreen();
+                do Output.printString("You have won!");
+                let exit = true;
+            }
+        }
+
+        return;
+    }
+}

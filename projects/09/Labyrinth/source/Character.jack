@@ -1,0 +1,78 @@
+class Character {
+    field int xPos, yPos;
+    field Map map;
+
+    method Array getXPos() {
+        return xPos;
+    }
+
+    method Array getYPos() {
+        return yPos;
+    }
+
+    constructor Character new(Map m) {
+        let map = m;
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void setPosition(int x, int y) {
+        let xPos = x;
+        let yPos = y;
+        return;
+    }
+
+    method void moveUp() {
+        if ((yPos > 0) & ~(hasUpCollision())) {
+            let yPos = yPos - 1;
+        }
+        return;
+    }
+
+     method void moveDown() {
+        if ((yPos < 15) & ~(hasDownCollision())) {
+            let yPos = yPos + 1;
+        }
+        return;
+     }
+
+    method void moveLeft() {
+        if ((xPos > 0) & ~(hasLeftCollision())) {
+            let xPos = xPos - 1;
+        }
+        return;
+    }
+
+     method void moveRight() {
+        if ((xPos < 31) & ~(hasRightCollision())) {
+            let xPos = xPos + 1;
+        }
+        return;
+    }
+
+    method boolean hasUpCollision() {
+        return hasCollisionAt(xPos, yPos - 1);
+    }
+
+    method boolean hasDownCollision() {
+        return hasCollisionAt(xPos, yPos + 1);
+    }
+
+    method boolean hasLeftCollision() {
+        return hasCollisionAt(xPos - 1, yPos);
+    }
+
+    method boolean hasRightCollision() {
+        return hasCollisionAt(xPos + 1, yPos);
+    }
+
+    method boolean hasCollisionAt(int x, int y) {
+        var int block;
+        let block = map.getBlockAt(x, y);
+        return ~(block = 0);
+    }
+}

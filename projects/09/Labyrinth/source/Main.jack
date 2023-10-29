@@ -1,0 +1,16 @@
+/**
+ * Main class serving as the entry point of the Labyrinth game.
+ */
+class Main {
+    /**
+     * The main method that initializes and runs the game.
+     * It creates a new Game object, runs it, and then disposes of it when done.
+     */
+    function void main() {
+        var Game game;
+        let game = Game.new();
+        do game.run();
+        do game.dispose();
+        return;
+    }
+}

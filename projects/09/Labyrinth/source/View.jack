@@ -1,0 +1,88 @@
+class View {
+    function void drawMap(Map map) {
+        var int i, j, cell;
+        var int location, memAddress;
+        var Array grid, row;
+
+        let grid = map.getGrid();
+        let i = 0;
+
+        while (i < 16) {
+            let j = 0;
+
+            while (j < 32) {
+                let row = grid[i];
+                let cell = row[j];
+
+                if (cell = 1) {
+                    let location = j + (i * 512);
+                    let memAddress = 16384+location;
+
+                    // draws solid block sprite
+                    do Memory.poke(memAddress+0, -1);
+                    do Memory.poke(memAddress+32, -28539);
+                    do Memory.poke(memAddress+64, -28539);
+                    do Memory.poke(memAddress+96, -1);
+                    do Memory.poke(memAddress+128, -31711);
+                    do Memory.poke(memAddress+160, -31711);
+                    do Memory.poke(memAddress+192, -1);
+                    do Memory.poke(memAddress+224, -24311);
+                    do Memory.poke(memAddress+256, -24311);
+                    do Memory.poke(memAddress+288, -1);
+                    do Memory.poke(memAddress+320, -28539);
+                    do Memory.poke(memAddress+352, -28539);
+                    do Memory.poke(memAddress+384, -1);
+                    do Memory.poke(memAddress+416, -31711);
+                    do Memory.poke(memAddress+448, -31711);
+                    do Memory.poke(memAddress+480, -1);
+                }
+
+                let j = j + 1;
+            }
+
+            let i = i + 1;
+        }
+
+        return;
+    }
+
+    function void eraseCharacter(Character character) {
+        var int xPos, yPos;
+
+        let xPos = character.getXPos();
+        let yPos = character.getYPos();
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(xPos * 16, yPos * 16, xPos * 16 + 15, yPos * 16 + 15);
+        return;
+    }
+
+    function void drawCharacter(Character character) {
+        var int xPos, yPos, location, memAddress;
+
+        let xPos = character.getXPos();
+        let yPos = character.getYPos();
+        let location = xPos + (yPos * 512);
+        let memAddress = 16384+location; // base screen address + character's offset location
+
+        // draws character sprite
+        do Memory.poke(memAddress+0, 1984);
+        do Memory.poke(memAddress+32, 2096);
+        do Memory.poke(memAddress+64, 12300);
+        do Memory.poke(memAddress+96, 20418);
+        do Memory.poke(memAddress+128, 14398);
+        do Memory.poke(memAddress+160, 4424);
+        do Memory.poke(memAddress+192, 2064);
+        do Memory.poke(memAddress+224, 4092);
+        do Memory.poke(memAddress+256, 4546);
+        do Memory.poke(memAddress+288, 9225);
+        do Memory.poke(memAddress+320, 10773);
+        do Memory.poke(memAddress+352, 12818);
+        do Memory.poke(memAddress+384, 1008);
+        do Memory.poke(memAddress+416, 7196);
+        do Memory.poke(memAddress+448, 8322);
+        do Memory.poke(memAddress+480, 8060);
+
+        return;
+    }
+}
