@@ -1,0 +1,23 @@
+{
+  "name": "jack-analyzer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx src/JackCompiler.ts",
+    "compile": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.8.7",
+    "prettier": "^3.0.3",
+    "tsx": "^3.14.0"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "colordiff": "^1.0.4",
+    "diff": "^5.1.0"
+  }
+}
